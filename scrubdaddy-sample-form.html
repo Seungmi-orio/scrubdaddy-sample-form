@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스크럽대디 샘플 신청서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FFFDF0; --surface: #FFFFFF; --border: #E8E4C8; --border-strong: #D4CE9A;
+  --accent: #0033A1; --accent-light: #E6ECFA; --accent-mid: #2255C4;
+  --text-primary: #1A1A18; --text-secondary: #6B6960; --text-hint: #A8A59C;
+  --tag-bg: #FDF8DC; --radius: 10px; --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text-primary); min-height: 100vh; padding: 2rem 1rem 4rem; }
+
+.page-header { max-width: 740px; margin: 0 auto 1.75rem; display: flex; align-items: flex-end; justify-content: space-between; }
+.page-title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+.page-title span { display: block; font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-top: 3px; font-family: 'DM Mono', monospace; }
+.badge { font-family: 'DM Mono', monospace; font-size: 11px; background: var(--accent-light); color: var(--accent); border: 1px solid #B8C8E0; border-radius: 20px; padding: 4px 12px; }
+
+.form-card { max-width: 740px; margin: 0 auto 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.section-header { padding: 0.9rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.section-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: white; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.section-title { font-size: 14px; font-weight: 600; }
+.section-body { padding: 1.25rem 1.5rem; }
+
+/* 셋업 세트 버튼 */
+.setup-set-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--accent); color: white;
+  border: none; border-radius: 20px; font-size: 13px; font-weight: 600;
+  font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: background 0.12s;
+  margin-bottom: 0.5rem;
+}
+.setup-set-btn:hover { background: #002280; }
+.setup-set-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.7; padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+
+/* 구분 탭 필터 */
+.cat-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
+.cat-btn {
+  padding: 5px 12px; background: var(--tag-bg); border: 1px solid var(--border);
+  border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--text-secondary);
+  font-family: 'Noto Sans KR', sans-serif; transition: all 0.1s;
+}
+.cat-btn:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+.cat-btn.active { background: var(--accent); border-color: var(--accent); color: white; font-weight: 500; }
+
+/* 검색 + 드롭다운 */
+.search-wrapper { position: relative; margin-bottom: 1rem; }
+.search-input {
+  width: 100%; padding: 10px 40px 10px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text-primary); background: var(--surface); outline: none;
+  transition: border-color 0.12s;
+}
+.search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
+.search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-hint); pointer-events: none; }
+.dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); z-index: 100;
+  max-height: 280px; overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  display: none;
+}
+.dropdown.open { display: block; }
+.dropdown-item {
+  padding: 10px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
+  transition: background 0.08s; display: flex; align-items: center; gap: 10px;
+}
+.dropdown-item:last-child { border-bottom: none; }
+.dropdown-item:hover { background: var(--accent-light); }
+.dropdown-item.selected { background: #F0EDE6; }
+.di-cat { font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 10px; padding: 2px 7px; white-space: nowrap; flex-shrink: 0; }
+.di-barcode { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-hint); white-space: nowrap; flex-shrink: 0; }
+.di-name { font-size: 13px; color: var(--text-primary); flex: 1; }
+.di-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-secondary); flex-shrink: 0; }
+.no-results { padding: 16px; text-align: center; font-size: 13px; color: var(--text-hint); font-family: 'DM Mono', monospace; }
+
+/* 선택된 상품 목록 */
+.selected-products { margin-top: 0.5rem; }
+.selected-count { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between; }
+.clear-all-btn { font-size: 11px; color: var(--text-hint); cursor: pointer; font-weight: 400; background: none; border: none; font-family: 'Noto Sans KR', sans-serif; text-decoration: underline; }
+.clear-all-btn:hover { color: #8B3A2E; }
+
+.product-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); margin-bottom: 6px;
+  transition: border-color 0.1s;
+}
+.product-item:hover { border-color: var(--border-strong); }
+.pi-info { flex: 1; min-width: 0; }
+.pi-name { font-size: 13px; font-weight: 500; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pi-meta { font-size: 11px; color: var(--text-secondary); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.pi-cat-tag { display: inline-block; font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 8px; padding: 1px 6px; margin-right: 4px; }
+.pi-qty { display: flex; align-items: center; gap: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; }
+.qty-btn { width: 30px; height: 30px; border: none; background: var(--bg); cursor: pointer; font-size: 16px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; transition: background 0.1s; font-family: 'DM Mono', monospace; flex-shrink: 0; }
+.qty-btn:hover { background: var(--border); }
+.qty-num { width: 44px; height: 30px; border: none; border-left: 1px solid var(--border); border-right: 1px solid var(--border); text-align: center; font-size: 13px; font-family: 'DM Mono', monospace; font-weight: 500; color: var(--text-primary); background: white; outline: none; }
+.pi-remove { width: 28px; height: 28px; border: none; background: none; cursor: pointer; color: var(--text-hint); font-size: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.1s; flex-shrink: 0; }
+.pi-remove:hover { background: #FDF0EE; color: #8B3A2E; }
+.empty-state { text-align: center; padding: 2rem; font-size: 13px; color: var(--text-hint); font-family: 'DM Mono', monospace; }
+
+/* 배송/신청 */
+.field-row { margin-bottom: 1rem; }
+.field-row:last-child { margin-bottom: 0; }
+label.field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+label.field-label .req { color: var(--accent); margin-left: 2px; }
+input[type="text"], input[type="email"], input[type="date"], textarea {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 13px; font-family: 'Noto Sans KR', sans-serif; color: var(--text-primary);
+  background: var(--surface); outline: none; transition: border-color 0.12s;
+}
+input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
+textarea { resize: vertical; min-height: 70px; }
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.quick-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.9rem; flex-wrap: wrap; }
+.quick-label { font-size: 13px; font-weight: 600; color: var(--text-primary); min-width: 68px; }
+.quick-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.quick-btn { padding: 5px 14px; background: var(--tag-bg); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--text-secondary); font-family: 'Noto Sans KR', sans-serif; transition: all 0.12s; }
+.quick-btn:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+.quick-btn.active { border-color: var(--accent); background: var(--accent); color: white; font-weight: 500; }
+
+/* Settings */
+.settings-panel { max-width: 740px; margin: 0 auto 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.settings-toggle { width: 100%; padding: 0.9rem 1.5rem; background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; font-family: 'Noto Sans KR', sans-serif; font-size: 13px; font-weight: 600; color: var(--text-secondary); transition: color 0.12s; }
+.settings-toggle:hover { color: var(--text-primary); }
+.settings-toggle .arrow { font-size: 10px; transition: transform 0.2s; }
+.settings-toggle.open .arrow { transform: rotate(180deg); }
+.settings-body { display: none; padding: 0 1.5rem 1.25rem; border-top: 1px solid var(--border); }
+.settings-body.open { display: block; }
+.guide-step { display: flex; gap: 10px; padding: 7px 0; font-size: 13px; color: var(--text-secondary); border-bottom: 1px solid var(--border); align-items: flex-start; }
+.guide-step:last-of-type { border-bottom: none; }
+.guide-num { font-family: 'DM Mono', monospace; font-size: 10px; background: var(--tag-bg); color: var(--text-secondary); width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.settings-body a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.url-input-row { display: flex; gap: 8px; margin-top: 6px; }
+.url-input-row input { flex: 1; font-family: 'DM Mono', monospace; font-size: 11px; }
+.save-btn { padding: 8px 14px; background: var(--accent); color: white; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; white-space: nowrap; }
+.save-btn:hover { background: #002280; }
+.status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--border-strong); margin-right: 6px; }
+.status-dot.active { background: var(--accent-mid); }
+.code-block { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: 'DM Mono', monospace; font-size: 11px; line-height: 1.7; overflow-x: auto; white-space: pre; margin: 6px 0; }
+
+.submit-area { max-width: 740px; margin: 1.5rem auto 0; }
+.submit-btn { width: 100%; padding: 13px; background: var(--accent); color: white; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
+.submit-btn:hover { background: #002280; transform: translateY(-1px); }
+.submit-btn:disabled { background: var(--text-hint); cursor: not-allowed; transform: none; }
+
+.toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text-primary); color: white; padding: 11px 20px; border-radius: 30px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 1000; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--accent); }
+.toast.error { background: #8B3A2E; }
+
+@media (max-width: 520px) { .input-row { grid-template-columns: 1fr; } }
+
+.preset-addr-btn {
+  padding: 7px 16px; background: var(--tag-bg); border: 1px solid var(--border);
+  border-radius: 20px; font-size: 13px; cursor: pointer; color: var(--text-secondary);
+  font-family: 'Noto Sans KR', sans-serif; transition: all 0.12s; font-weight: 500;
+}
+.preset-addr-btn:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
+.preset-addr-btn.active { border-color: var(--accent); background: var(--accent); color: white; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="page-title">스크럽대디 샘플 신청서 <span>SCRUB DADDY SAMPLE REQUEST FORM</span></div>
+  <span class="badge">● 접수 중</span>
+</div>
+
+<!-- ① 제품 선택 -->
+<div class="form-card">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">제품 선택</div>
+  </div>
+  <div class="section-body">
+
+    <!-- 구분 필터 -->
+    <div style="margin-bottom:0.5rem;">
+      <span style="font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">구분 필터</span>
+    </div>
+    <div class="cat-filter" id="catFilter"></div>
+
+    <!-- 검색 드롭다운 -->
+    <div class="search-wrapper" id="searchWrapper">
+      <input type="text" class="search-input" id="searchInput" placeholder="상품명, 바코드, 고유코드로 검색..." autocomplete="off" />
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <div class="dropdown" id="dropdown"></div>
+    </div>
+
+    <!-- 선택된 상품 목록 -->
+    <div class="selected-products">
+      <div class="selected-count">
+        <span id="selectedCount">선택된 상품 0개</span>
+        <button class="clear-all-btn" onclick="clearAll()">전체 삭제</button>
+      </div>
+      <div id="productList">
+        <div class="empty-state">상품을 검색하거나 구분을 선택해 추가하세요</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ② 배송 정보 -->
+<div class="form-card">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">배송 정보</div>
+  </div>
+  <div class="section-body">
+    <div class="field-row">
+      <label class="field-label">자주 쓰는 주소</label>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="preset-addr-btn" onclick="fillAddr('서울 사무실')">🏢 서울 사무실</button>
+        <button class="preset-addr-btn" onclick="fillAddr('물류센터')">🏭 물류센터</button>
+      </div>
+    </div>
+    <div class="field-row">
+      <label class="field-label">배송 주소 <span class="req">*</span></label>
+      <input type="text" id="addr" placeholder="서울시 강남구 테헤란로 123, 5층" />
+    </div>
+    <div class="field-row">
+      <div class="input-row">
+        <div>
+          <label class="field-label">받을 사람 <span class="req">*</span></label>
+          <input type="text" id="recipient" placeholder="홍길동" />
+        </div>
+        <div>
+          <label class="field-label">연락처 <span class="req">*</span></label>
+          <input type="text" id="phone" placeholder="010-0000-0000" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ③ 추가 정보 -->
+<div class="form-card">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">추가 정보</div>
+  </div>
+  <div class="section-body">
+    <div class="field-row">
+      <label class="field-label">신청자</label>
+      <input type="text" id="requesterManual" placeholder="이름 입력" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">신청 목적</label>
+      <input type="text" id="purposeManual" placeholder="목적 입력" />
+    </div>
+    <div class="field-row">
+      <label class="field-label">필요 일자</label>
+      <input type="date" id="neededDate" style="width:auto; min-width:180px;" />
+    </div>
+    <div class="field-row" style="margin-bottom:0;">
+      <label class="field-label">메모</label>
+      <textarea id="memo" placeholder="특이사항, 수량 조정, 참고 링크 등"></textarea>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 관리자 설정 패널 (비밀번호 잠금) -->
+<div style="max-width:740px; margin:0 auto 1rem;">
+  <div style="text-align:center;">
+    <button onclick="toggleAdminPanel()" style="background:none; border:none; font-size:12px; color:var(--text-hint); cursor:pointer; font-family:'DM Mono',monospace; padding:4px 8px;">⚙ 관리자</button>
+  </div>
+  <div id="adminLock" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.25rem 1.5rem; margin-top:0.5rem;">
+    <div style="font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:0.75rem;">관리자 비밀번호</div>
+    <div style="display:flex; gap:8px;">
+      <input type="password" id="adminPwInput" placeholder="비밀번호 입력" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13px; font-family:'Noto Sans KR',sans-serif; outline:none;" onkeydown="if(event.key==='Enter') checkAdminPw()" />
+      <button onclick="checkAdminPw()" style="padding:9px 16px; background:var(--accent); color:white; border:none; border-radius:var(--radius-sm); font-size:13px; font-weight:600; font-family:'Noto Sans KR',sans-serif; cursor:pointer;">확인</button>
+    </div>
+  </div>
+  <div id="adminPanel" style="display:none; background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; margin-top:0.5rem;">
+    <div style="padding:0.9rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+      <span style="font-size:14px; font-weight:600;">⚙ 관리자 설정</span>
+      <button onclick="closeAdminPanel()" style="background:none; border:none; font-size:18px; color:var(--text-hint); cursor:pointer;">×</button>
+    </div>
+    <div style="padding:1.25rem 1.5rem;">
+      <div style="font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem;">Apps Script URL</div>
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="adminScriptUrl" style="flex:1; padding:9px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:11px; font-family:'DM Mono',monospace; outline:none;" placeholder="https://script.google.com/macros/s/.../exec" />
+        <button onclick="saveAdminUrl()" style="padding:9px 16px; background:var(--accent); color:white; border:none; border-radius:var(--radius-sm); font-size:13px; font-weight:600; font-family:'Noto Sans KR',sans-serif; cursor:pointer; white-space:nowrap;">저장</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-hint); margin-top:8px;">저장 후 새로고침 없이 바로 적용됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="submit-area">
+  <button class="submit-btn" onclick="submitForm()" id="submitBtn">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg>
+    신청서 제출하기
+  </button>
+  <p style="text-align:center; font-size:11px; color:var(--text-hint); margin-top:8px; font-family:'DM Mono',monospace;">Slack 알림 + Google Sheets 자동 기록</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 상품 데이터 ──
+const PRODUCTS = [{"cat": "디쉬 대디", "code": "SD_SD_SDSB_02_08", "barcode": "810196570498", "name": "디쉬 대디 클리닝 스틱 스코어 블루 리필 2P"}, {"cat": "댐프 더스터", "code": "SD_DD_CR_05_25", "barcode": "810196570313", "name": "댐프 더스터 번들 5P"}, {"cat": "기타", "code": "SD_HUB_HANDLE_01_05", "barcode": "858797007814", "name": "스크럽 허브 핸들 1P"}, {"cat": "세제", "code": "SD_TG_Clean_01_06", "barcode": "810044133851", "name": "스크럽대디 탠저린 클린 1P"}, {"cat": "세제", "code": "SD_Power_Paste_01_06", "barcode": "858797007586", "name": "스크럽대디 파워 페이스트 1P"}, {"cat": "세제", "code": "SD_PE_Gel_01_06", "barcode": "810044133875", "name": "스크럽대디 파워이레이져 젤 1P"}, {"cat": "스크럽 마미", "code": "SM_PIGLET_01_18", "barcode": "810196570351", "name": "스크럽 마미 피글렛 쉐입 1P"}, {"cat": "스크럽 마미", "code": "SM_POOH_01_18", "barcode": "810196570344", "name": "스크럽 마미 푸 쉐입 1P"}, {"cat": "스크럽 대디", "code": "SD_TIGGER_01_18", "barcode": "810196570337", "name": "스크럽 대디 티거 쉐입 1P"}, {"cat": "디쉬 대디", "code": "SD_DISH_SV_BD_03_12", "barcode": "810044138221", "name": "디쉬 대디 클리닝 스틱 실버 번들"}, {"cat": "디쉬 대디", "code": "SD_DISH_SC_RF_04_12", "barcode": "810044139105", "name": "디쉬 대디 클리닝 스틱 스코어 리필 4P"}, {"cat": "디쉬 대디", "code": "SD_DISH_RF_CBP_05_06", "barcode": "810044136388", "name": "디쉬 대디 클리닝 스틱 리필 콤보 팩 5P"}, {"cat": "디쉬 대디", "code": "SD_DISH_MC_RF_04_12", "barcode": "810044139952", "name": "디쉬 대디 클리닝 스틱 멀티 컬러 리필 4P"}, {"cat": "스크럽 마미", "code": "SM_SJ_FB_01_24", "barcode": "810044139938", "name": "스크럽 마미 삼진 쉐입 어묵 1P"}, {"cat": "스크럽 대디", "code": "SD_SJ_LGO_01_24", "barcode": "810044139921", "name": "스크럽 대디 삼진 쉐입 대파 1P"}, {"cat": "스크럽 대디", "code": "SD_Banana_Milk_02_24", "barcode": "810196570245", "name": "스크럽 대디 바나나맛 우유 쉐입 2P"}, {"cat": "스크럽 대디", "code": "SD_ZTO2_01_18", "barcode": "810044139860", "name": "스크럽대디 주토피아2 쉐입1P"}, {"cat": "스크럽 마미", "code": "SD_SM_LS_03_12", "barcode": "810044139853", "name": "스크럽마미 리틀 스프링쉐입3P"}, {"cat": "굿즈", "code": "SD_TB_GOODS", "barcode": "810044138474", "name": "스크럽대디 텀블러"}, {"cat": "굿즈", "code": "SD_T-shirt", "barcode": "", "name": "스크럽대디 티셔츠"}, {"cat": "굿즈", "code": "SD_SUVITZ_GOODS_BULK", "barcode": "8800274120365", "name": "스크럽대디 캐릭터 슈비츠"}, {"cat": "스트로우 대디", "code": "SD_ST_KIT_01_12", "barcode": "810044131857", "name": "스트로우대디 클리닝 키트(실버)"}, {"cat": "행주", "code": "SD_ST_CS_04_06", "barcode": "810044133677", "name": "스크럽대디 스트릭리스 행주 4P"}, {"cat": "스트로우 대디", "code": "SD_STY_KIT_RF_01_48", "barcode": "810044131901", "name": "스트로우대디 클리닝 브러쉬 리필(옐로우)"}, {"cat": "스트로우 대디", "code": "SD_STY_KIT_01_12", "barcode": "810044131840", "name": "스트로우대디 클리닝 키트(옐로우)"}, {"cat": "스펀지 대디", "code": "SD_SP_CS_04_12", "barcode": "859547004190", "name": "스펀지대디 4P"}, {"cat": "기타", "code": "SD_SOAP_DD_01_06", "barcode": "810044130164", "name": "솝 대디 1P"}, {"cat": "스크럽 마미", "code": "SD_SM_FW_03_12", "barcode": "810044131031", "name": "스크럽마미 플라워 쉐입3P"}, {"cat": "스크럽 마미", "code": "SD_SM_CS_08_14", "barcode": "810044135312", "name": "스크럽마미 컬러 8P"}, {"cat": "스크럽 마미", "code": "SD_SM_CS_07_20", "barcode": "810044137408", "name": "스크럽 마미 6P + 대디 캐디 1P"}, {"cat": "스크럽 마미", "code": "SD_SM_CS_06_24", "barcode": "810044130539", "name": "스크럽마미 컬러 6P"}, {"cat": "스크럽 마미", "code": "SD_SM_CS_03_12", "barcode": "859547004503", "name": "스크럽마미 컬러 3P"}, {"cat": "스크럽 마미", "code": "SD_SM_CAT_03_12", "barcode": "810044131727", "name": "스크럽마미 캣 쉐입3P"}, {"cat": "굿즈", "code": "SD_SM_AKIRING_GOODS", "barcode": "810044138368", "name": "스크럽마미 아크릴키링"}, {"cat": "굿즈", "code": "SD_SMPEN_GOODS", "barcode": "810044138399", "name": "스크럽마미 펜"}, {"cat": "굿즈", "code": "SD_SMKRING_GOODS", "barcode": "810044138610", "name": "스크럽마미 인형 키링"}, {"cat": "굿즈", "code": "SD_SMGT_GOODS", "barcode": "810044138450", "name": "스크럽마미 그립톡"}, {"cat": "굿즈", "code": "SD_SMF_CS_GOODS", "barcode": "810044138566", "name": "스크럽마미 페이스쿠션"}, {"cat": "굿즈", "code": "SD_SMDOLL_S_GOODS", "barcode": "810044138597", "name": "스크럽마미 소형 인형"}, {"cat": "스크럽 대디", "code": "SD_SD_WT_03_12", "barcode": "810044130317", "name": "스크럽대디 윈터쉐입3P"}, {"cat": "굿즈", "code": "SD_SD_PICNIC_GOODS", "barcode": "810044138825", "name": "스크럽대디 피크닉매트"}, {"cat": "스크럽 대디", "code": "SD_SD_NY_03_12", "barcode": "810044137934", "name": "스크럽대디 뉴이어쉐입3P"}, {"cat": "스크럽 대디", "code": "SD_SD_HW_03_12", "barcode": "810044130324", "name": "스크럽대디 할로윈쉐입 3P"}, {"cat": "굿즈", "code": "SD_SD_HCRUG_GOODS", "barcode": "810044138801", "name": "스크럽대디 러그 반원형"}, {"cat": "디쉬 대디", "code": "SD_SD_DS_03_18", "barcode": "810044136029", "name": "디쉬대디 클리닝 스틱 번들"}, {"cat": "디쉬 대디", "code": "SD_SD_DS_01_08", "barcode": "810044133462", "name": "디쉬대디 클리닝 스틱 스크럽 브러쉬 리필 1P"}, {"cat": "디쉬 대디", "code": "SD_SD_DS_01_06", "barcode": "810044130997", "name": "디쉬대디 클리닝 스틱 실버 1P"}, {"cat": "디쉬 대디", "code": "SD_SD_DSY_01_06", "barcode": "810044131833", "name": "디쉬대디 클리닝 스틱 옐로우 1P"}, {"cat": "스크럽 대디", "code": "SD_SD_DK_02_54", "barcode": "810044136203", "name": "스크럽대디 던킨도너츠쉐입2P"}, {"cat": "굿즈", "code": "SD_SD_CUP_01_30", "barcode": "", "name": "스크럽대디 머그컵 1P"}, {"cat": "스크럽 대디", "code": "SD_SD_CS_08_14", "barcode": "810044135305", "name": "스크럽대디 컬러 8P"}, {"cat": "스크럽 대디", "code": "SD_SD_CS_07_20", "barcode": "810044137392", "name": "스크럽 대디 6P + 대디 캐디 1P"}, {"cat": "스크럽 대디", "code": "SD_SD_CS_06_24", "barcode": "810044130508", "name": "스크럽대디 컬러 6P"}, {"cat": "스크럽 대디", "code": "SD_SD_CS_03_12", "barcode": "859547004251", "name": "스크럽대디 컬러 3P"}, {"cat": "굿즈", "code": "SD_SD_CRUG_GOODS", "barcode": "810044138818", "name": "스크럽대디 러그 원형"}, {"cat": "액정클리너", "code": "SD_SD_CN_01_100", "barcode": "", "name": "스크린대디 1P"}, {"cat": "BBQ 대디", "code": "SD_SD_BBQ_RF_01_06", "barcode": "810044131154", "name": "스크럽대디 BBQ대디 리필 1P"}, {"cat": "BBQ 대디", "code": "SD_SD_BBQ_01_06", "barcode": "810044131147", "name": "스크럽대디 BBQ대디 1P"}, {"cat": "굿즈", "code": "SD_SD_AKIRING_GOODS", "barcode": "810044138375", "name": "스크럽대디 아크릴키링"}, {"cat": "굿즈", "code": "SD_SDTC_GOODS", "barcode": "810044138429", "name": "스크럽대디 티코스터"}, {"cat": "굿즈", "code": "SD_SDPEN_GOODS", "barcode": "810044138405", "name": "스크럽대디 펜"}, {"cat": "굿즈", "code": "SD_SDKRING_GOODS", "barcode": "810044138627", "name": "스크럽대디 인형 키링"}, {"cat": "굿즈", "code": "SD_SDGT_GOODS", "barcode": "810044138467", "name": "스크럽대디 그립톡"}, {"cat": "굿즈", "code": "SD_SDF_CS_GOODS", "barcode": "810044138573", "name": "스크럽대디 페이스쿠션"}, {"cat": "굿즈", "code": "SD_SDDOLL_S_GOODS", "barcode": "810044132465", "name": "스크럽대디 소형 인형"}, {"cat": "굿즈", "code": "SD_SDC_HCRUG_GOODS", "barcode": "810044138795", "name": "스크럽대디 캐릭터 러그 반원형"}, {"cat": "스코어 대디", "code": "SD_SC_DD_ST_02_06", "barcode": "810044130270", "name": "스코어 대디 스틸 2P"}, {"cat": "스코어 대디", "code": "SD_SC_DD_03_12", "barcode": "859547004688", "name": "스코어대디 3P"}, {"cat": "수세미 거치대", "code": "SD_SC_CS_01_12", "barcode": "859547004695", "name": "스펀지캐디 수세미 거치대 1P"}, {"cat": "굿즈", "code": "SD_POSTIT_GOODS", "barcode": "810044138498", "name": "스크럽대디 포스트잇"}, {"cat": "굿즈", "code": "SD_MGTIC_GOODS", "barcode": "810044138689", "name": "스크럽대디 마그넷5종"}, {"cat": "이레이저", "code": "SD_MERY_CS_01_25", "barcode": "", "name": "이레이저 대디 미니 옐로우 1P"}, {"cat": "이레이저", "code": "SD_MERO_CS_01_25", "barcode": "", "name": "이레이저 대디 미니 오렌지 1P"}, {"cat": "스크럽 대디", "code": "SD_LOTTE_CS_03_12", "barcode": "810044139198", "name": "스크럽대디 롯데 자이언츠쉐입3P"}, {"cat": "굿즈", "code": "SD_GCUP_GOODS", "barcode": "810044138481", "name": "스크럽대디 글라스"}, {"cat": "이레이저", "code": "SD_ER_CS_MM_02_06", "barcode": "810044137613", "name": "이레이저 마미 2P"}, {"cat": "디쉬 대디", "code": "SD_DISH_VP01_08", "barcode": "810044138832", "name": "디쉬 대디 밸류 팩"}, {"cat": "댐프 더스터", "code": "SD_DD_YL_01_08", "barcode": "810044135961", "name": "스크럽대디 댐프더스터 옐로우 1P(+RRP)"}, {"cat": "댐프 더스터", "code": "SD_DD_CS_01_08", "barcode": "810044135947", "name": "스크럽대디 댐프더스터 실버 1P(+RRP)"}, {"cat": "굿즈", "code": "SD_DD_BF_GOODS", "barcode": "810044138559", "name": "댐프더스터 바디필로우"}, {"cat": "굿즈", "code": "SD_DD_AKIRING_GOODS", "barcode": "810044138351", "name": "댐프더스터 아크릴키링"}, {"cat": "굿즈", "code": "SD_DDPEN_GOODS", "barcode": "810044138382", "name": "댐프더스터 펜"}, {"cat": "굿즈", "code": "SD_DDKRING_GOODS", "barcode": "810044138603", "name": "댐프더스터 인형 키링"}, {"cat": "굿즈", "code": "SD_DDDOLL_S_GOODS", "barcode": "810044138580", "name": "댐프더스터 소형 인형"}, {"cat": "굿즈", "code": "SD_BallCap_Pink", "barcode": "810044134360", "name": "스크럽대디 볼캡(핑크)"}, {"cat": "굿즈", "code": "SD_BallCap_Orange", "barcode": "810044132472", "name": "스크럽대디 볼캡(오렌지)"}, {"cat": "굿즈", "code": "SD_BallCap_Navy", "barcode": "810044134353", "name": "스크럽대디 볼캡(네이비)"}, {"cat": "행주", "code": "SD_MT_CS_02_06", "barcode": "810044130782", "name": "스크럽대디 극세사행주 2P"}, {"cat": "액정클리너", "code": "SD_SD_CN_03_24", "barcode": "859547004640", "name": "스크린대디 3P"}, {"cat": "스크럽 대디", "code": "SD_SD_CS_RRP_01_18", "barcode": "859547004008", "name": "스크럽대디 오리지널 1P(+RRP)"}, {"cat": "디쉬 대디", "code": "SD_SD_DSP_02_08", "barcode": "810044131000P", "name": "디쉬대디 클리닝 스틱 핑크 리필 2P(케이스)"}, {"cat": "디쉬 대디", "code": "SD_SD_DSYC_02_08", "barcode": "810044131000Y", "name": "디쉬대디 클리닝 스틱 옐로우 리필 2P(케이스)"}, {"cat": "스크럽 대디", "code": "SD_SD_SM_03_12N", "barcode": "810044139068", "name": "스크럽대디 서머쉐입3P(신)"}, {"cat": "스크럽 대디", "code": "SD_SD_SM_03_12", "barcode": "810044131048", "name": "스크럽대디 서머쉐입3P(구)"}, {"cat": "스크럽 마미", "code": "SD_SM_CS_RRP_01_18", "barcode": "859547004466", "name": "스크럽마미 오리지널 1P(+RRP)"}, {"cat": "선물세트", "code": "SD_CM_CS_10_05", "barcode": "810044137781", "name": "스크럽대디 크리스마스트리 번들"}, {"cat": "선물세트", "code": "SD_GIFTSET_", "barcode": "810044139730", "name": "스크럽대디 선물세트"}];
+
+// 셋업 세트 구성 (고유코드 기준)
+const SETUP_SET = [
+  "SD_SD_CS_03_12",   // 스크럽대디 컬러 3P
+  "SD_SM_CS_03_12",   // 스크럽마미 컬러 3P
+  "SD_DD_CS_01_08",   // 댐프더스터 실버 1P
+  "SD_SD_DS_01_06",   // 디쉬대디 클리닝 스틱 실버 1P
+];
+const SETUP_EXTRA = [];
+
+// ── 상태 ──
+const selected = new Map(); // code -> {product, qty}
+let activeCat = '전체';
+
+// ── 구분 필터 생성 ──
+const allCats = [...new Set(PRODUCTS.map(p => p.cat))];
+const catsOrdered = ['전체', ...allCats.filter(c => c !== '기타' && c !== '선물세트'), '선물세트', '기타'];
+const catFilter = document.getElementById('catFilter');
+catsOrdered.forEach(c => {
+  if (!allCats.includes(c) && c !== '전체') return;
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn' + (c === '전체' ? ' active' : '');
+  btn.textContent = c;
+  btn.onclick = () => selectCat(c, btn);
+  catFilter.appendChild(btn);
+});
+
+function selectCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const q = document.getElementById('searchInput').value;
+  renderDropdown(q);
+  if (!q && cat !== '전체') {
+    document.getElementById('dropdown').classList.add('open');
+  }
+}
+
+// ── 검색 ──
+const searchInput = document.getElementById('searchInput');
+const dropdown = document.getElementById('dropdown');
+
+searchInput.addEventListener('input', e => renderDropdown(e.target.value));
+searchInput.addEventListener('focus', () => { if (searchInput.value || activeCat !== '전체') renderDropdown(searchInput.value); });
+document.addEventListener('click', e => { if (!document.getElementById('searchWrapper').contains(e.target)) dropdown.classList.remove('open'); });
+
+function renderDropdown(q) {
+  const query = q.trim().toLowerCase();
+  let list = PRODUCTS;
+  if (activeCat !== '전체') list = list.filter(p => p.cat === activeCat);
+  if (query) list = list.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query) || p.code.toLowerCase().includes(query));
+  list = list.slice(0, 50);
+
+  if (!list.length) {
+    dropdown.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
+  } else {
+    dropdown.innerHTML = list.map(p => {
+      const isSel = selected.has(p.code);
+      return `<div class="dropdown-item${isSel?' selected':''}" onclick="addProduct('${p.code}')">
+        <span class="di-cat">${p.cat}</span>
+        <span class="di-barcode">${p.barcode}</span>
+        <span class="di-name">${p.name}</span>
+        <span class="di-code">${p.code}</span>
+      </div>`;
+    }).join('');
+  }
+  dropdown.classList.add('open');
+}
+
+function addProduct(code) {
+  const p = PRODUCTS.find(x => x.code === code);
+  if (!p) return;
+  if (selected.has(code)) { showToast('이미 추가된 상품이에요', ''); return; }
+  selected.set(code, {product: p, qty: 1});
+  renderProductList();
+  renderDropdown(searchInput.value);
+  showToast(`${p.name.substring(0,20)}... 추가됨`, 'success');
+}
+
+function addProductObj(p) {
+  if (selected.has(p.code)) return;
+  selected.set(p.code, {product: p, qty: 1});
+}
+
+// ── 셋업 세트 ──
+function loadSetupSet() {
+  SETUP_SET.forEach(code => {
+    const p = PRODUCTS.find(x => x.code === code);
+    if (p) addProductObj(p);
+  });
+  SETUP_EXTRA.forEach(p => addProductObj(p));
+  renderProductList();
+  renderDropdown(searchInput.value);
+  showToast('선물세트 구성이 추가되었습니다!', 'success');
+}
+
+// ── 상품 목록 렌더 ──
+function renderProductList() {
+  const list = document.getElementById('productList');
+  const count = document.getElementById('selectedCount');
+  count.textContent = `선택된 상품 ${selected.size}개`;
+
+  if (!selected.size) {
+    list.innerHTML = '<div class="empty-state">상품을 검색하거나 구분을 선택해 추가하세요</div>';
+    return;
+  }
+  list.innerHTML = [...selected.entries()].map(([code, {product: p, qty}]) => `
+    <div class="product-item" id="pi_${code.replace(/[^a-zA-Z0-9]/g,'_')}">
+      <div class="pi-info">
+        <div class="pi-name"><span class="pi-cat-tag">${p.cat}</span>${p.name}</div>
+        <div class="pi-meta">${p.barcode !== '-' ? p.barcode + ' · ' : ''}${p.code}</div>
+      </div>
+      <div class="pi-qty">
+        <button class="qty-btn" onclick="changeQty('${code}',-1)">−</button>
+        <input class="qty-num" type="number" value="${qty}" min="1" max="9999" onchange="setQty('${code}',this.value)" />
+        <button class="qty-btn" onclick="changeQty('${code}',1)">+</button>
+      </div>
+      <button class="pi-remove" onclick="removeProduct('${code}')" title="삭제">×</button>
+    </div>
+  `).join('');
+}
+
+function changeQty(code, delta) {
+  if (!selected.has(code)) return;
+  const item = selected.get(code);
+  item.qty = Math.max(1, Math.min(9999, item.qty + delta));
+  const input = document.querySelector(`#pi_${code.replace(/[^a-zA-Z0-9]/g,'_')} .qty-num`);
+  if (input) input.value = item.qty;
+}
+
+function setQty(code, val) {
+  if (!selected.has(code)) return;
+  selected.get(code).qty = Math.max(1, Math.min(9999, parseInt(val)||1));
+}
+
+function removeProduct(code) {
+  selected.delete(code);
+  renderProductList();
+  renderDropdown(searchInput.value);
+}
+
+function clearAll() {
+  if (!selected.size) return;
+  selected.clear();
+  renderProductList();
+  renderDropdown(searchInput.value);
+}
+
+
+
+// ── 관리자 설정 ──
+const ADMIN_PW = 'frog1234'; // 비밀번호 (원하시면 변경하세요)
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/a/macros/orio.co.kr/s/AKfycbxNdaxVej4zBs05xeFGrWu6WuBpltaI-7tFe_gtxoyZlX4vdlRnOePIHZE8zdcskCky/exec';
+
+function toggleAdminPanel() {
+  const lock = document.getElementById('adminLock');
+  const panel = document.getElementById('adminPanel');
+  if (panel.style.display === 'block') {
+    lock.style.display = 'none'; panel.style.display = 'none';
+  } else {
+    lock.style.display = 'block'; panel.style.display = 'none';
+    document.getElementById('adminPwInput').value = '';
+    setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+  }
+}
+function checkAdminPw() {
+  const pw = document.getElementById('adminPwInput').value;
+  if (pw === ADMIN_PW) {
+    document.getElementById('adminLock').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    const saved = localStorage.getItem('script_url') || DEFAULT_SCRIPT_URL;
+    document.getElementById('adminScriptUrl').value = saved;
+  } else {
+    document.getElementById('adminPwInput').style.borderColor = '#8B3A2E';
+    setTimeout(() => document.getElementById('adminPwInput').style.borderColor = '', 1500);
+    showToast('비밀번호가 틀렸어요', 'error');
+  }
+}
+function saveAdminUrl() {
+  const val = document.getElementById('adminScriptUrl').value.trim();
+  if (!val) { showToast('URL을 입력해주세요', 'error'); return; }
+  localStorage.setItem('script_url', val);
+  showToast('URL이 저장되었습니다!', 'success');
+}
+function closeAdminPanel() {
+  document.getElementById('adminLock').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'none';
+}
+function getScriptUrl() {
+  return localStorage.getItem('script_url') || DEFAULT_SCRIPT_URL;
+}
+
+// ── 배송지 프리셋 ──
+const ADDR_PRESETS = {
+  '서울 사무실': '서울시 성동구 아차산로 126 3층 313호',
+  '물류센터':    '경기도 이천시 마장면 덕평로 647, (주)오리오'
+};
+function fillAddr(name) {
+  document.getElementById('addr').value = ADDR_PRESETS[name] || '';
+  document.querySelectorAll('.preset-addr-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  showToast(`${name} 주소를 불러왔어요`, 'success');
+}
+
+// ── 제출 ──
+async function submitForm() {
+  if (!selected.size) { showToast('상품을 하나 이상 선택해주세요', 'error'); return; }
+  const addr = document.getElementById('addr').value.trim();
+  const recipient = document.getElementById('recipient').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  if (!addr || !recipient || !phone) { showToast('배송 정보를 모두 입력해주세요', 'error'); return; }
+
+  const requester = document.getElementById('requesterManual').value.trim() || '-';
+  const purpose = document.getElementById('purposeManual').value.trim() || '-';
+  const now = new Date().toLocaleString('ko-KR');
+
+  // 상품 목록 문자열 (구분/고유코드/바코드/상품명/수량)
+  const productLines = [...selected.values()].map(({product:p, qty}) =>
+    `${p.cat} | ${p.code} | ${p.barcode} | ${p.name} | ${qty}개`
+  ).join('\n');
+
+  const productSummary = [...selected.values()].map(({product:p, qty}) => `${p.name} × ${qty}`).join(', ');
+
+  const payload = {
+    제출일시: now,
+    신청자: requester,
+    신청목적: purpose,
+    선택상품수: selected.size + '개',
+    상품목록: productLines,
+    배송주소: addr,
+    받는사람: recipient,
+    연락처: phone,
+    필요일자: document.getElementById('neededDate').value || '-',
+    메모: document.getElementById('memo').value || '-'
+  };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = '전송 중...';
+
+  const SCRIPTS_URL = getScriptUrl();
+
+  try {
+    const res = await fetch(SCRIPTS_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg> 신청서 제출하기';
+    if (text.includes('OK')) {
+      showToast('✓ 신청서가 제출되었습니다!', 'success');
+      setTimeout(() => {
+        selected.clear(); renderProductList(); renderDropdown('');
+        ['addr','recipient','phone','memo','neededDate','requesterManual','purposeManual'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+        searchInput.value = '';
+        document.querySelectorAll('.preset-addr-btn').forEach(b => b.classList.remove('active'));
+      }, 1500);
+    } else {
+      showToast('오류가 발생했어요. 담당자에게 문의해주세요', 'error');
+    }
+  } catch(err) {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg> 신청서 제출하기';
+    showToast('전송 실패. 잠시 후 다시 시도해주세요', 'error');
+  }
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+</script>
+</body>
+</html>
