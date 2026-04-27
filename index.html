@@ -251,19 +251,19 @@ textarea { resize: vertical; min-height: 70px; }
   </div>
   <div class="section-body">
     <div class="field-row">
-      <label class="field-label">신청자</label>
+      <label class="field-label">신청자 <span class="req">*</span></label>
       <input type="text" id="requesterManual" placeholder="이름 입력" />
     </div>
     <div class="field-row">
-      <label class="field-label">신청 목적</label>
+      <label class="field-label">신청 목적 <span class="req">*</span></label>
       <input type="text" id="purposeManual" placeholder="목적 입력" />
     </div>
     <div class="field-row">
-      <label class="field-label">필요 일자</label>
+      <label class="field-label">필요 일자 <span class="req">*</span></label>
       <input type="date" id="neededDate" style="width:auto; min-width:180px;" />
     </div>
     <div class="field-row" style="margin-bottom:0;">
-      <label class="field-label">메모</label>
+      <label class="field-label">메모 <span style="font-size:10px; color:var(--text-hint); font-weight:400; text-transform:none; letter-spacing:0;">(선택)</span></label>
       <textarea id="memo" placeholder="특이사항, 수량 조정, 참고 링크 등"></textarea>
     </div>
   </div>
@@ -523,13 +523,44 @@ function fillAddr(name) {
 // ── 제출 ──
 async function submitForm() {
   if (!selected.size) { showToast('상품을 하나 이상 선택해주세요', 'error'); return; }
+
   const addr = document.getElementById('addr').value.trim();
   const recipient = document.getElementById('recipient').value.trim();
   const phone = document.getElementById('phone').value.trim();
-  if (!addr || !recipient || !phone) { showToast('배송 정보를 모두 입력해주세요', 'error'); return; }
+  const requester = document.getElementById('requesterManual').value.trim();
+  const purpose = document.getElementById('purposeManual').value.trim();
+  const neededDate = document.getElementById('neededDate').value.trim();
 
-  const requester = document.getElementById('requesterManual').value.trim() || '-';
-  const purpose = document.getElementById('purposeManual').value.trim() || '-';
+  // 필수값 검사 + 빨간 테두리 표시
+  const requiredFields = [
+    { id: 'addr', val: addr, label: '배송 주소' },
+    { id: 'recipient', val: recipient, label: '받을 사람' },
+    { id: 'phone', val: phone, label: '연락처' },
+    { id: 'requesterManual', val: requester, label: '신청자' },
+    { id: 'purposeManual', val: purpose, label: '신청 목적' },
+    { id: 'neededDate', val: neededDate, label: '필요 일자' },
+  ];
+
+  let hasError = false;
+  requiredFields.forEach(f => {
+    const el = document.getElementById(f.id);
+    if (!f.val) {
+      el.style.borderColor = '#C0392B';
+      el.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.12)';
+      hasError = true;
+    } else {
+      el.style.borderColor = '';
+      el.style.boxShadow = '';
+    }
+  });
+
+  if (hasError) {
+    showToast('필수 항목을 모두 입력해주세요', 'error');
+    const first = requiredFields.find(f => !f.val);
+    if (first) document.getElementById(first.id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   const now = new Date().toLocaleString('ko-KR');
 
   // 상품 목록 문자열 (구분/고유코드/바코드/상품명/수량)
@@ -548,7 +579,7 @@ async function submitForm() {
     배송주소: addr,
     받는사람: recipient,
     연락처: phone,
-    필요일자: document.getElementById('neededDate').value || '-',
+    필요일자: neededDate,
     메모: document.getElementById('memo').value || '-'
   };
 
@@ -571,7 +602,10 @@ async function submitForm() {
       showToast('✓ 신청서가 제출되었습니다!', 'success');
       setTimeout(() => {
         selected.clear(); renderProductList(); renderDropdown('');
-        ['addr','recipient','phone','memo','neededDate','requesterManual','purposeManual'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+        ['addr','recipient','phone','memo','neededDate','requesterManual','purposeManual'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) { el.value = ''; el.style.borderColor = ''; el.style.boxShadow = ''; }
+        });
         searchInput.value = '';
         document.querySelectorAll('.preset-addr-btn').forEach(b => b.classList.remove('active'));
       }, 1500);
