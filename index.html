@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -60,31 +59,42 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
 .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-hint); pointer-events: none; }
 
-/* 💡 [수정 내용] 상품 리스트가 아래쪽 테두리에 걸려 짤리는 현상 방지 패딩 추가 */
+/* 💡 [수정 완료] 디즈니, 선물세트 긴 이름 짤림 방지 특수 스크롤 세팅 */
 .dropdown {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-sm); z-index: 100;
-  max-height: 400px; overflow-y: auto;
+  max-height: 380px; overflow-y: auto;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   display: none;
-  padding-bottom: 40px;   /* 👈 마지막 아이템 하단 짤림 방지 */
-  box-sizing: border-box; /* 👈 패딩 높이 계산 오류 방지 */
+  padding-bottom: 70px !important; /* 하단 세로 여백 대폭 증가 */
+  box-sizing: border-box;
+}
+/* 💡 [추가 완료] 드롭다운 맨 아래에 절대 좁혀지지 않는 강제 투명 가상 영역 배치 */
+.dropdown::after {
+  content: "";
+  display: block;
+  height: 1px;
+  margin-top: 60px;
+  visibility: hidden;
 }
 .dropdown.open { display: block; }
+
+/* 💡 [수정 완료] 글자가 두 줄 이상 넘어가는 세트상품 대응 유연 레이아웃 적용 */
 .dropdown-item {
-  padding: 15px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
-  transition: background 0.08s; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
+  transition: background 0.08s; display: flex; align-items: flex-start; gap: 10px;
+  height: auto !important; min-height: 48px;
 }
 .dropdown-item:last-child { border-bottom: none; }
 .dropdown-item:hover { background: var(--accent-light); }
 .dropdown-item.selected { background: #F0EDE6; }
-.di-cat { font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 10px; padding: 2px 7px; white-space: nowrap; flex-shrink: 0; }
-.di-barcode { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-hint); white-space: nowrap; flex-shrink: 0; }
-.di-name { font-size: 13px; color: var(--text-primary); flex: 1; }
-.di-barcode { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-hint); white-space: nowrap; flex-shrink: 0; }
-.di-name { font-size: 13px; color: var(--text-primary); flex: 1; }
-.di-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-secondary); flex-shrink: 0; }
+
+/* 뱃지 및 텍스트 상단 정렬 맞춤 */
+.di-cat { font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 10px; padding: 2px 7px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+.di-barcode { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-hint); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+.di-name { font-size: 13px; color: var(--text-primary); flex: 1; line-height: 1.4; word-break: break-all; }
+.di-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-secondary); flex-shrink: 0; margin-top: 2px; }
 .no-results { padding: 16px; text-align: center; font-size: 13px; color: var(--text-hint); font-family: 'DM Mono', monospace; }
 
 /* 선택된 상품 목록 */
@@ -289,12 +299,10 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="toast" id="toast"></div>
 
 <script>
-// ── 상품 데이터 ──
 let PRODUCTS = [];
 const selected = new Map();
 let activeCat = '전체';
 
-// 💡 [수정 내용] 제공해주신 최신 배포 URL 주소를 기본값으로 세팅했습니다.
 const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlzIdurcxcq7Cg7OukGqFMdMgUB2S_n6w1v-HiudA6iBLXB_TFReeYuQwhmuNqb7cx/exec';
 
 function buildCatFilter() {
@@ -441,7 +449,6 @@ function clearAll() {
   renderDropdown(searchInput.value);
 }
 
-// ── 관리자 설정 ──
 const ADMIN_PW = 'frog1234';
 
 function toggleAdminPanel() {
@@ -482,7 +489,6 @@ function getScriptUrl() {
   return localStorage.getItem('script_url') || DEFAULT_SCRIPT_URL;
 }
 
-// ── 배송지 프리셋 ──
 const ADDR_PRESETS = {
   '서울 사무실': '서울시 성동구 아차산로 126 3층 313호',
   '물류센터':    '경기도 이천시 마장면 덕평로 647, (주)오리오'
@@ -494,7 +500,6 @@ function fillAddr(name) {
   showToast(`${name} 주소를 불러왔어요`, 'success');
 }
 
-// ── 제출 ──
 async function submitForm() {
   if (!selected.size) { showToast('상품을 하나 이상 선택해주세요', 'error'); return; }
 
@@ -549,7 +554,7 @@ async function submitForm() {
     배송주소: addr,
     받는사람: recipient,
     연락처: phone,
-    필요일자: neededDate, // 👈 백엔드로 '필요일자' 데이터 포장 발송 완벽 연동
+    필요일자: neededDate,
     메모: document.getElementById('memo').value || '-'
   };
 
