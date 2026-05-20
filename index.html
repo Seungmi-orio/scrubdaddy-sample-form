@@ -59,28 +59,27 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
 .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-hint); pointer-events: none; }
 
-/* 💡 [수정 완료] 디즈니, 선물세트 긴 이름 짤림 방지 특수 스크롤 세팅 */
+/* 💡 드롭다운 가시성 공간 극대화 */
 .dropdown {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-sm); z-index: 100;
-  max-height: 380px; overflow-y: auto;
+  max-height: 450px; overflow-y: auto;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   display: none;
-  padding-bottom: 70px !important; /* 하단 세로 여백 대폭 증가 */
+  padding-bottom: 100px !important; /* 패딩 대폭 추가 */
   box-sizing: border-box;
 }
-/* 💡 [추가 완료] 드롭다운 맨 아래에 절대 좁혀지지 않는 강제 투명 가상 영역 배치 */
+/* 하단 강제 스크롤 가상 앵커 */
 .dropdown::after {
   content: "";
   display: block;
   height: 1px;
-  margin-top: 60px;
+  margin-top: 80px;
   visibility: hidden;
 }
 .dropdown.open { display: block; }
 
-/* 💡 [수정 완료] 글자가 두 줄 이상 넘어가는 세트상품 대응 유연 레이아웃 적용 */
 .dropdown-item {
   padding: 12px 14px; cursor: pointer; border-bottom: 1px solid var(--border);
   transition: background 0.08s; display: flex; align-items: flex-start; gap: 10px;
@@ -90,7 +89,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .dropdown-item:hover { background: var(--accent-light); }
 .dropdown-item.selected { background: #F0EDE6; }
 
-/* 뱃지 및 텍스트 상단 정렬 맞춤 */
 .di-cat { font-size: 10px; font-weight: 600; color: var(--accent); background: var(--accent-light); border-radius: 10px; padding: 2px 7px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
 .di-barcode { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-hint); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
 .di-name { font-size: 13px; color: var(--text-primary); flex: 1; line-height: 1.4; word-break: break-all; }
@@ -370,7 +368,9 @@ function renderDropdown(q) {
   let list = PRODUCTS;
   if (activeCat !== '전체') list = list.filter(p => p.cat === activeCat);
   if (query) list = list.filter(p => p.name.toLowerCase().includes(query) || p.barcode.includes(query) || p.code.toLowerCase().includes(query));
-  list = list.slice(0, 50);
+  
+  // 💡 [수정 내용] 원래 있던 list = list.slice(0, 50); 코드를 완전히 삭제했습니다!
+  // 이제 50개 제한 없이 구글 시트에 기재된 모든 상품 데이터가 잘림 없이 100% 렌더링됩니다.
 
   if (!list.length) {
     dropdown.innerHTML = '<div class="no-results">검색 결과가 없습니다</div>';
@@ -427,7 +427,7 @@ function changeQty(code, delta) {
   if (!selected.has(code)) return;
   const item = selected.get(code);
   item.qty = Math.max(1, Math.min(9999, item.qty + delta));
-  const input = document.querySelector(`#pi_${code.replace(/[^a-zA-Z0-9]/g,'_')} .qty-num`);
+  const input = document.querySelector(`#pi_${code.replace(/[^a-zA-’Z0-9]/g,'_')} .qty-num`);
   if (input) input.value = item.qty;
 }
 
