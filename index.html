@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>스크럽대디 샘플 신청서</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #FFFDF0; --surface: #FFFFFF; --border: #E8E4C8; --border-strong: #D4CE9A;
@@ -20,27 +20,13 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .page-title span { display: block; font-size: 12px; font-weight: 400; color: var(--text-secondary); margin-top: 3px; font-family: 'DM Mono', monospace; }
 .badge { font-family: 'DM Mono', monospace; font-size: 11px; background: var(--accent-light); color: var(--accent); border: 1px solid #B8C8E0; border-radius: 20px; padding: 4px 12px; }
 
-/* 💡 [수정 완료] 드롭다운이 카드 테두리 밖으로 튀어나갈 수 있도록 overflow: hidden 제거 및 position 지정 */
 .form-card { max-width: 740px; margin: 0 auto 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; position: relative; }
 .section-header { padding: 0.9rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-/* 카드 헤더 둥근 테두리 깎임 유지용 스타일 추가 */
 .form-card > .section-header:first-child { border-top-left-radius: 13px; border-top-right-radius: 13px; }
 .section-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: white; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; flex-shrink: 0; }
 .section-title { font-size: 14px; font-weight: 600; }
 .section-body { padding: 1.25rem 1.5rem; }
 
-/* 셋업 세트 버튼 */
-.setup-set-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 16px; background: var(--accent); color: white;
-  border: none; border-radius: 20px; font-size: 13px; font-weight: 600;
-  font-family: 'Noto Sans KR', sans-serif; cursor: pointer; transition: background 0.12s;
-  margin-bottom: 0.5rem;
-}
-.setup-set-btn:hover { background: #002280; }
-.setup-set-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.7; padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
-
-/* 구분 탭 필터 */
 .cat-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1rem; }
 .cat-btn {
   padding: 5px 12px; background: var(--tag-bg); border: 1px solid var(--border);
@@ -50,7 +36,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .cat-btn:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
 .cat-btn.active { background: var(--accent); border-color: var(--accent); color: white; font-weight: 500; }
 
-/* 검색 + 드롭다운 */
 .search-wrapper { position: relative; margin-bottom: 1rem; }
 .search-input {
   width: 100%; padding: 10px 40px 10px 14px;
@@ -62,13 +47,12 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
 .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-hint); pointer-events: none; }
 
-/* 💡 [수정 완료] 아랫박스를 완전히 무시하고 위로 튀어나오도록 레이어(z-index) 최상위 선언 */
 .dropdown {
   position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); z-index: 99999 !important; /* 👈 하단 카드를 덮어버리도록 수정 */
+  border-radius: var(--radius-sm); z-index: 99999 !important;
   max-height: 300px; overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* 조금 더 입체감 있는 그림자로 변경 */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   display: none;
   padding-bottom: 16px;
   box-sizing: border-box;
@@ -90,18 +74,15 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .di-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-secondary); flex-shrink: 0; margin-top: 2px; }
 .no-results { padding: 16px; text-align: center; font-size: 13px; color: var(--text-hint); font-family: 'DM Mono', monospace; }
 
-/* 선택된 상품 목록 */
 .selected-products { margin-top: 0.5rem; }
 .selected-count { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between; }
 .clear-all-btn { font-size: 11px; color: var(--text-hint); cursor: pointer; font-weight: 400; background: none; border: none; font-family: 'Noto Sans KR', sans-serif; text-decoration: underline; }
 .clear-all-btn:hover { color: #8B3A2E; }
 
 .product-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 12px;
+  display: flex; align-items: center; gap: 10px; padding: 10px 12px;
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); margin-bottom: 6px;
-  transition: border-color 0.1s;
+  border-radius: var(--radius-sm); margin-bottom: 6px; transition: border-color 0.1s;
 }
 .product-item:hover { border-color: var(--border-strong); }
 .pi-info { flex: 1; min-width: 0; }
@@ -116,7 +97,6 @@ body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: va
 .pi-remove:hover { background: #FDF0EE; color: #8B3A2E; }
 .empty-state { text-align: center; padding: 2rem; font-size: 13px; color: var(--text-hint); font-family: 'DM Mono', monospace; }
 
-/* 배송/신청 */
 .field-row { margin-bottom: 1rem; }
 .field-row:last-child { margin-bottom: 0; }
 label.field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
@@ -129,13 +109,6 @@ input[type="text"], input[type="email"], input[type="date"], textarea {
 input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,90,61,0.08); }
 textarea { resize: vertical; min-height: 70px; }
 .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-.quick-row { display: flex; align-items: center; gap: 10px; margin-bottom: 0.9rem; flex-wrap: wrap; }
-.quick-label { font-size: 13px; font-weight: 600; color: var(--text-primary); min-width: 68px; }
-.quick-btns { display: flex; flex-wrap: wrap; gap: 6px; }
-.quick-btn { padding: 5px 14px; background: var(--tag-bg); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; cursor: pointer; color: var(--text-secondary); font-family: 'Noto Sans KR', sans-serif; transition: all 0.12s; }
-.quick-btn:hover { border-color: var(--accent-mid); color: var(--accent); background: var(--accent-light); }
-.quick-btn.active { border-color: var(--accent); background: var(--accent); color: white; font-weight: 500; }
 
 .submit-area { max-width: 740px; margin: 1.5rem auto 0; }
 .submit-btn { width: 100%; padding: 13px; background: var(--accent); color: white; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; font-family: 'Noto Sans KR', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
@@ -171,7 +144,6 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="section-title">제품 선택</div>
   </div>
   <div class="section-body">
-
     <div style="margin-bottom:0.5rem;">
       <span style="font-size:12px; font-weight:600; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.05em;">구분 필터</span>
     </div>
@@ -193,7 +165,6 @@ textarea { resize: vertical; min-height: 70px; }
         <div class="empty-state">상품을 검색하거나 구분을 선택해 추가하세요</div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -206,8 +177,8 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="field-row">
       <label class="field-label">자주 쓰는 주소</label>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="preset-addr-btn" onclick="fillAddr('서울 사무실')">🏢 서울 사무실</button>
-        <button class="preset-addr-btn" onclick="fillAddr('물류센터')">🏭 물류센터</button>
+        <button class="preset-addr-btn" onclick="fillAddr('서울 사무실', event)">🏢 서울 사무실</button>
+        <button class="preset-addr-btn" onclick="fillAddr('물류센터', event)">🏭 물류센터</button>
       </div>
     </div>
     <div class="field-row">
@@ -302,6 +273,7 @@ function buildCatFilter() {
   const allCats = [...new Set(PRODUCTS.map(p => p.cat))];
   const catsOrdered = ['전체', ...allCats.filter(c => c !== '기타' && c !== '선물세트' && c !== '부자재'), '부자재', '선물세트', '기타'];
   const catFilter = document.getElementById('catFilter');
+  if(!catFilter) return;
   catFilter.innerHTML = '';
   catsOrdered.forEach(c => {
     if (!allCats.includes(c) && c !== '전체') return;
@@ -313,26 +285,35 @@ function buildCatFilter() {
   });
 }
 
+/* 💡 [수정 완료] 데이터 유연 수신 및 예외 처리 완벽 방어형 보완 */
 async function loadProducts() {
   const loadingEl = document.getElementById('productsLoading');
   try {
     const url = getScriptUrl() + '?action=getProducts';
     const res = await fetch(url, { method: 'GET', redirect: 'follow' });
-    const text = await res.text();
-    const clean = text.trim().replace(/^[^{[]+/, '').replace(/[^}\]]+$/, '');
-    const data = JSON.parse(clean);
-    if (data.result === 'OK' && data.products && data.products.length > 0) {
+    let text = await res.text();
+    
+    // 복잡하게 가공하지 않고 원본 그대로 파싱 시도, 에러 시 2차 정제 작동
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch(e) {
+      const clean = text.trim().replace(/^[^{[]+/, '').replace(/[^}\]]+$/, '');
+      data = JSON.parse(clean);
+    }
+
+    if (data && data.result === 'OK' && data.products) {
       PRODUCTS = data.products;
       if (loadingEl) loadingEl.style.display = 'none';
       buildCatFilter();
       renderDropdown('');
       showToast(`상품 ${PRODUCTS.length}개 로딩 완료`, 'success');
     } else {
-      throw new Error('상품 데이터 없음');
+      throw new Error('No product field');
     }
   } catch(err) {
-    if (loadingEl) loadingEl.textContent = '⚠️ 상품 목록을 불러오지 못했어요. 페이지를 새로고침해주세요.';
-    console.error('상품 로딩 실패:', err);
+    if (loadingEl) loadingEl.textContent = '⚠️ 실시간 상품 목록을 연동하지 못했습니다. (관리자 설정을 확인해 주세요)';
+    console.error('상품 데이터 로딩 실패:', err);
   }
 }
 
@@ -348,17 +329,21 @@ function selectCat(cat, btn) {
 const searchInput = document.getElementById('searchInput');
 const dropdown = document.getElementById('dropdown');
 
-searchInput.addEventListener('input', e => renderDropdown(e.target.value));
-searchInput.addEventListener('focus', () => { if (searchInput.value || activeCat !== '전체') renderDropdown(searchInput.value); });
+if (searchInput) {
+  searchInput.addEventListener('input', e => renderDropdown(e.target.value));
+  searchInput.addEventListener('focus', () => { if (searchInput.value || activeCat !== '전체') renderDropdown(searchInput.value); });
+}
+
 document.addEventListener('click', e => {
   const wrapper = document.getElementById('searchWrapper');
   const filter = document.getElementById('catFilter');
-  if (!wrapper.contains(e.target) && !filter.contains(e.target)) {
-    dropdown.classList.remove('open');
+  if (wrapper && filter && !wrapper.contains(e.target) && !filter.contains(e.target)) {
+    if(dropdown) dropdown.classList.remove('open');
   }
 });
 
 function renderDropdown(q) {
+  if(!dropdown) return;
   const query = q.trim().toLowerCase();
   let list = PRODUCTS;
   if (activeCat !== '전체') list = list.filter(p => p.cat === activeCat);
@@ -393,6 +378,7 @@ function addProduct(code) {
 function renderProductList() {
   const list = document.getElementById('productList');
   const count = document.getElementById('selectedCount');
+  if(!list || !count) return;
   count.textContent = `선택된 상품 ${selected.size}개`;
 
   if (!selected.size) {
@@ -485,7 +471,7 @@ const ADDR_PRESETS = {
   '서울 사무실': '서울시 성동구 아차산로 126 3층 313호',
   '물류센터':    '경기도 이천시 마장면 덕평로 647, (주)오리오'
 };
-function fillAddr(name) {
+function fillAddr(name, event) {
   document.getElementById('addr').value = ADDR_PRESETS[name] || '';
   document.querySelectorAll('.preset-addr-btn').forEach(b => b.classList.remove('active'));
   event.currentTarget.classList.add('active');
@@ -588,10 +574,12 @@ async function submitForm() {
 
 function showToast(msg, type='') {
   const t = document.getElementById('toast');
+  if(!t) return;
   t.textContent = msg; t.className = 'toast ' + type + ' show';
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+// 최초 실행
 loadProducts();
 </script>
 </body>
